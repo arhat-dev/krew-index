@@ -1,0 +1,154 @@
+apiVersion: krew.googlecontainertools.github.com/v1alpha2
+kind: Plugin
+metadata:
+  name: kubectl-convert
+spec:
+  caveats: ""
+  description: "A plugin for Kubernetes command-line tool `kubectl`, which allows you to convert manifests between different API \nversions. This can be particularly helpful to migrate manifests to a non-deprecated api version with newer Kubernetes release.\nFor more info, visit [migrate to non deprecated apis](/docs/reference/using-api/deprecation-guide/#migrate-to-non-deprecated-apis)"
+  homepage: https://github.com/kubernetes/kubernetes
+  platforms:
+    - bin: kubectl-convert
+      files:
+        - from: kubectl-convert.linux.s390x/kubectl-convert
+          to: .
+        - from: kubectl-convert.linux.s390x/LICENSE
+          to: .
+      selector:
+        matchLabels:
+          arch: s390x
+          os: linux
+      sha256: 6f7d1febf69f7368adf06d1681cf3c26814fc29741cd7811621d985c81a5c4e2
+      uri: https://github.com/arhat-dev/krew-index/releases/download/release-kubectl-convert-9c2894a1/kubectl-convert.linux.s390x.tar.gz
+    - bin: kubectl-convert
+      files:
+        - from: kubectl-convert.linux.armv7/kubectl-convert
+          to: .
+        - from: kubectl-convert.linux.armv7/LICENSE
+          to: .
+      selector:
+        matchLabels:
+          arch: arm
+          os: linux
+      sha256: 06f4b34dc5fc84d9c6c821807235186c9c7d30a689b7f368c091fefc38065f65
+      uri: https://github.com/arhat-dev/krew-index/releases/download/release-kubectl-convert-9c2894a1/kubectl-convert.linux.armv7.tar.gz
+    - bin: kubectl-convert
+      files:
+        - from: kubectl-convert.linux.x86/kubectl-convert
+          to: .
+        - from: kubectl-convert.linux.x86/LICENSE
+          to: .
+      selector:
+        matchLabels:
+          arch: 386
+          os: linux
+      sha256: 0baf10da3fd06785bd57cedf41e308f820041fe0004f2639496ffc10f4938135
+      uri: https://github.com/arhat-dev/krew-index/releases/download/release-kubectl-convert-9c2894a1/kubectl-convert.linux.x86.tar.gz
+    - bin: kubectl-convert
+      files:
+        - from: kubectl-convert.linux.arm64/kubectl-convert
+          to: .
+        - from: kubectl-convert.linux.arm64/LICENSE
+          to: .
+      selector:
+        matchLabels:
+          arch: arm64
+          os: linux
+      sha256: a75099aa9e2a850c05779879a56ff78274830b4dd720c241340301b72f88767d
+      uri: https://github.com/arhat-dev/krew-index/releases/download/release-kubectl-convert-9c2894a1/kubectl-convert.linux.arm64.tar.gz
+    - bin: kubectl-convert
+      files:
+        - from: kubectl-convert.windows.arm64/kubectl-convert
+          to: .
+        - from: kubectl-convert.windows.arm64/LICENSE
+          to: .
+      selector:
+        matchLabels:
+          arch: arm64
+          os: windows
+      sha256: 9635a571d70eb81fe5b575a8d2a7695c5ec4bf9ffd71cd50c06491af99bcebec
+      uri: https://github.com/arhat-dev/krew-index/releases/download/release-kubectl-convert-9c2894a1/kubectl-convert.windows.arm64.tar.gz
+    - bin: kubectl-convert
+      files:
+        - from: kubectl-convert.windows.amd64/kubectl-convert
+          to: .
+        - from: kubectl-convert.windows.amd64/LICENSE
+          to: .
+      selector:
+        matchLabels:
+          arch: amd64
+          os: windows
+      sha256: 74cf0d51075167b272973ee7f485491976e5070a8aea903cafb7ebbe28609e5b
+      uri: https://github.com/arhat-dev/krew-index/releases/download/release-kubectl-convert-9c2894a1/kubectl-convert.windows.amd64.tar.gz
+    - bin: kubectl-convert
+      files:
+        - from: kubectl-convert.windows.armv7/kubectl-convert
+          to: .
+        - from: kubectl-convert.windows.armv7/LICENSE
+          to: .
+      selector:
+        matchLabels:
+          arch: arm
+          os: windows
+      sha256: 2739d8721312121c3ae959ca87a18bf5846284dd54233d5bf0927748011ff848
+      uri: https://github.com/arhat-dev/krew-index/releases/download/release-kubectl-convert-9c2894a1/kubectl-convert.windows.armv7.tar.gz
+    - bin: kubectl-convert
+      files:
+        - from: kubectl-convert.linux.ppc64le/kubectl-convert
+          to: .
+        - from: kubectl-convert.linux.ppc64le/LICENSE
+          to: .
+      selector:
+        matchLabels:
+          arch: ppc64le
+          os: linux
+      sha256: 8101b12290a015d054b5be9dd5fa506a6015dc02093bf6e71275035815c32fab
+      uri: https://github.com/arhat-dev/krew-index/releases/download/release-kubectl-convert-9c2894a1/kubectl-convert.linux.ppc64le.tar.gz
+    - bin: kubectl-convert
+      files:
+        - from: kubectl-convert.linux.amd64/kubectl-convert
+          to: .
+        - from: kubectl-convert.linux.amd64/LICENSE
+          to: .
+      selector:
+        matchLabels:
+          arch: amd64
+          os: linux
+      sha256: df8d3ad3d8f8a36a39b4313cd82c6a6aec242a7ddaa1ddaa0239d72fd91fc937
+      uri: https://github.com/arhat-dev/krew-index/releases/download/release-kubectl-convert-9c2894a1/kubectl-convert.linux.amd64.tar.gz
+    - bin: kubectl-convert
+      files:
+        - from: kubectl-convert.windows.x86/kubectl-convert
+          to: .
+        - from: kubectl-convert.windows.x86/LICENSE
+          to: .
+      selector:
+        matchLabels:
+          arch: 386
+          os: windows
+      sha256: d652844c753c74b88e034d05f0437dffcc142385bed650dac4445b1e29e7c42f
+      uri: https://github.com/arhat-dev/krew-index/releases/download/release-kubectl-convert-9c2894a1/kubectl-convert.windows.x86.tar.gz
+    - bin: kubectl-convert
+      files:
+        - from: kubectl-convert.darwin.arm64/kubectl-convert
+          to: .
+        - from: kubectl-convert.darwin.arm64/LICENSE
+          to: .
+      selector:
+        matchLabels:
+          arch: arm64
+          os: darwin
+      sha256: 67744bc6663aacc137aa71a096256c1394c610a5bf392e65ec799486781757eb
+      uri: https://github.com/arhat-dev/krew-index/releases/download/release-kubectl-convert-9c2894a1/kubectl-convert.darwin.arm64.tar.gz
+    - bin: kubectl-convert
+      files:
+        - from: kubectl-convert.darwin.amd64/kubectl-convert
+          to: .
+        - from: kubectl-convert.darwin.amd64/LICENSE
+          to: .
+      selector:
+        matchLabels:
+          arch: amd64
+          os: darwin
+      sha256: b15f218517e44010a22f705c7d547b639ea4eb8f878d769c312d28c66e8efe27
+      uri: https://github.com/arhat-dev/krew-index/releases/download/release-kubectl-convert-9c2894a1/kubectl-convert.darwin.amd64.tar.gz
+  version: v1.22.2
