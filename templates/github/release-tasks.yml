@@ -1,0 +1,28 @@
+{{-
+  $plugins_str := eval.Shell "find templates -name 'kubectl-*.yml'"
+    | removePrefix "templates/"
+    | removeSuffix ".yml"
+-}}
+{{- range $_, $v := split $plugins_str "\n" -}}
+{{- if $v }}
+- name: {{ $v }}
+  env:
+  - name: APP
+    value: {{ $v }}
+  hooks:
+    before:
+    - shell: |-
+        tag_name="release-{{- $v -}}-${GIT_COMMIT:0:8}"
+        git tag -m "${tag_name}" "${tag_name}"
+        git push origin "${tag_name}"
+
+  title@env: release-{{- $v -}}-${GIT_COMMIT:0:8}
+  tag@env: release-{{- $v -}}-${GIT_COMMIT:0:8}
+  notes: |-
+    Automated `{{- $v -}}` Release for Downloads
+
+  draft: false
+  files:
+  - path: ./build/archive/{{- $v -}}.*.tar.gz
+{{- end }}
+{{- end }}
