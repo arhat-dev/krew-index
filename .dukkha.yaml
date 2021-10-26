@@ -54,14 +54,13 @@ workflow:run:
 
   - task@template: workflow:run(index-{{- matrix.plugin -}}, {})
 
-  # TODO: use template renderer after arhat-dev/dukkha#108 been resolved
   # TODO: currently ghcr.io requires authorization for direct blob download
   #       so we have to use github release for blob storage
-  # - task@env: cosign:upload(${MATRIX_PLUGIN}, {})
+  # - task@template: cosign:upload({{ matrix.plugin }}, {})
 
   # github release MUST happen before git commit, or the urls in index
   # will be with newer commit hash
-  - task@env: github:release(${MATRIX_PLUGIN}, {})
+  - task@template: github:release({{ matrix.plugin }}, {})
 
   - shell@env: |-
       git add --all .

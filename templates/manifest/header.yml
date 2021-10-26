@@ -8,6 +8,8 @@ metadata:
 spec:
   version: ${VERSION}
   homepage: ${HOMEPAGE}
+  shortDescription: |-
+    {{- env.SHORT_DESCRIPTION | default env.APP -}}
   description@template?str: |-
     {{- env.DESCRIPTION -}}
   caveats@template?str: |-
