@@ -7,9 +7,13 @@ golang:build:
     # source(git-tags): https://github.com/kubernetes/kubernetes
     value: v1.22.2
 
-  # following env for manifest documentation only
+  # following envs are only meant for the manifest generation
   - name: HOMEPAGE
     value: https://github.com/kubernetes/kubernetes
+
+  - name: SHORT_DESCRIPTION
+    value: |-
+      Convert manifests between different API versions
 
   - name: DESCRIPTION
     value@transform?str:
