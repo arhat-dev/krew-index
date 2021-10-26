@@ -86,13 +86,14 @@ workflow:run:
   env: *env
   matrix: *matrix
   hooks:
+    after:matrix:success:
+    - shell: mkdir -p build/manifests
+    - shell@file?str|template?str: templates/shell/write-blob-entry.tmpl
     after:success:
     - shell@file?str|template?str: templates/shell/write-manifest.tmpl
 
   jobs:
   - task@template: golang:build({{ env.APP }})
-  - shell: mkdir -p build/manifests
-  - shell@file?str|template?str: templates/shell/write-blob-entry.tmpl
 
 cosign:upload:
 - name: *name

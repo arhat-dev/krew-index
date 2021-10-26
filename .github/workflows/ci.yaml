@@ -63,7 +63,9 @@ jobs:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |-
         dukkha run workflow local run update-index \
-          -m plugin=${{ matrix.plugin }}
+          -m plugin=${{ matrix.plugin }} \
+          --translate-ansi-stream=false \
+          --force-color
 
     - name: Remove dukkha cache
       if: always()

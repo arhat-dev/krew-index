@@ -108,4 +108,3 @@ github:release@template: |-
     - path@env: ./build/archive/${APP}.*.tar.gz
   {{- end }}
   {{- end }}
-
