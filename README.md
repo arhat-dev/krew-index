@@ -2,6 +2,24 @@
 
 [![CI](https://github.com/arhat-dev/krew-index/workflows/CI/badge.svg)](https://github.com/arhat-dev/krew-index/actions?query=workflow%3ACI)
 
+## Workflow
+
+### Add a new plugin `kubectl-FOO`
+
+- Create a plugin config at [templates/kubectl-FOO.yaml](./templates)
+  - Add a `workflow:run` task for the plugin
+    - with name `index-kubectl-FOO`
+    - with env
+      - `APP=kubectl-FOO`
+      - `VERSION=v{MAJOR}.{MINOR}.{FIX}`
+      - `SHORT_DESCRIPTION` (mandatory field for a plugin manifest)
+      - `DESCRIPTION`
+      - `CAVEATES`
+  - Add a `github:release` task for the plugin
+    - with name `kubectl-FOO`
+
+- Include the new plugin in the [github workflows build matrix](./.github/workflows/ci.yaml)
+
 ## LICENSE
 
 ```txt

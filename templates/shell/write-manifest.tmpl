@@ -3,4 +3,5 @@
     | os.WriteFile (printf "build/manifests/%s.yaml" env.APP)
 -}}
 
-dukkha render build/manifests/{{- env.APP -}}.yaml -o plugins/{{- env.APP -}}.yaml
+dukkha render build/manifests/{{- env.APP -}}.yaml \
+  -o plugins/{{- trimPrefix "kubectl-" env.APP -}}.yaml
