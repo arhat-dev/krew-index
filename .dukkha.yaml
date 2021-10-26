@@ -1,0 +1,81 @@
+include:
+- templates/kubectl-*.yml
+
+global:
+  values:
+    templates:
+      manifest_header@file?str: templates/manifest/header.yml
+      manifest_blob_entry@file?str: templates/manifest/blob-entry.yml
+
+renderers:
+  http:
+    enable_cache: true
+    cache_max_age: 5h
+
+tools:
+  workflow:
+  - name: local
+  golang:
+  - name: local
+  cosign:
+  - name: local
+  docker:
+  - name: local
+  github:
+  - name: local
+
+workflow:run:
+- name: update-index
+  matrix:
+    plugin@template: |-
+      {{-
+        eval.Shell "find templates -name 'kubectl-*.yml'"
+          | removePrefix "templates/"
+          | removeSuffix ".yml"
+          | addPrefix "- "
+      -}}
+  hooks:
+    before:
+    - shell: |-
+        git config user.email '72795724+arhatbot@users.noreply.github.com'
+        git config user.name 'Arhat Bot'
+
+    after:
+    - shell: |-
+        git config --unset user.email
+        git config --unset user.name
+
+  jobs:
+  - shell@template: |-
+      rm -rf \
+        build/archive/{{- matrix.plugin }}.* \
+        build/bin/{{- matrix.plugin }}.* \
+        build/manifests/{{- matrix.plugin }}.*
+
+  - task@template: workflow:run(index-{{- matrix.plugin -}}, {})
+
+  # TODO: use template renderer after arhat-dev/dukkha#108 been resolved
+  # TODO: currently ghcr.io requires authorization for direct blob download
+  #       so we have to use github release for blob storage
+  # - task@env: cosign:upload(${MATRIX_PLUGIN}, {})
+
+  # github release MUST happen before git commit, or the urls in index
+  # will be with newer commit hash
+  - task@env: github:release(${MATRIX_PLUGIN}, {})
+
+  - shell@env: |-
+      git add --all .
+
+      if git diff-index --quiet HEAD; then
+        exit 0
+      fi
+
+      git commit -m "chore: Update krew index for ${MATRIX_PLUGIN}"
+      git pull --rebase
+      git push
+
+docker:login:
+- name: ghcr
+  registry: ghcr.io
+  username: ${GHCR_USER}
+  password@env: ${GHCR_PASS}

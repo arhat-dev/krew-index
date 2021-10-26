@@ -6,6 +6,7 @@ ignore: |
   build/
   vendor/
   .dukkha/cache/
+  plugins/
 
 rules:
   braces:

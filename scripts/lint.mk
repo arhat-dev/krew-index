@@ -20,10 +20,11 @@ lint.file:
 		editorconfig-checker -config .ecrc
 
 lint.shell:
-	${RUN_CTR_APP} koalaman/shellcheck-alpine:stable \
-		sh -c "find . | grep -E -e '.sh\$$' | \
-			grep -v vendor | grep -v build | grep -v \.git | \
-			xargs -I'{}' shellcheck -S warning -e SC1090 -e SC1091 {} ;"
+	:
+	# ${RUN_CTR_APP} koalaman/shellcheck-alpine:stable \
+	# 	sh -c "find . | grep -E -e '.sh\$$' | \
+	# 		grep -v vendor | grep -v build | grep -v \.git | \
+	# 		xargs -I'{}' shellcheck -S warning -e SC1090 -e SC1091 {} ;"
 
 lint.yaml:
 	${RUN_CTR_APP} ghcr.io/arhat-dev/yamllint:1.26 \

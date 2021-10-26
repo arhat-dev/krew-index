@@ -1,0 +1,121 @@
+golang:build:
+- name: &name kubectl-convert
+  env: &env
+  - name: APP
+    value: *name
+  - name: VERSION
+    # source(git-tags): https://github.com/kubernetes/kubernetes
+    value: v1.22.2
+
+  # following env for manifest documentation only
+  - name: HOMEPAGE
+    value: https://github.com/kubernetes/kubernetes
+
+  - name: DESCRIPTION
+    value@transform?str:
+      value@template|http?str: |-
+        {{- $ver_parts := split env.VERSION "." -}}
+        https://raw.githubusercontent.com/kubernetes/website/snapshot-initial-
+          {{- index $ver_parts 0 -}}.{{- index $ver_parts 1 -}}
+        /content/en/docs/tasks/tools/included/kubectl-convert-overview.md
+      ops:
+      - template: |-
+          {{- $parts := split .Value "---\n" -}}
+          {{- index $parts (add (len $parts) -1) | trimPrefix "\n" -}}
+
+  - name: CAVEATES
+    value: ""
+
+  matrix: &matrix
+    kernel:
+    - linux
+    - windows
+    arch:
+    - amd64
+    - arm64
+    - armv7
+    - x86
+    # armv6 and armv5 are not set since krew only accepts `arm`
+    # and armv7 is the most commonly used arch
+    # - armv6
+    # - armv5
+    include:
+    - kernel: [darwin]
+      arch:
+      - amd64
+      - arm64
+    - kernel: [linux]
+      arch:
+      - s390x
+      - ppc64le
+  hooks:
+    before:
+    - shell@template: |-
+        [[ -d "build/src/{{- env.APP -}}" ]] && exit 0
+
+        git clone --depth 1 --branch ${VERSION} \
+          https://github.com/kubernetes/kubernetes.git \
+          "build/src/{{- env.APP -}}"
+    after:matrix:success:
+    - shell@template: |-
+        {{- $suffix := "" -}}
+        {{- if eq matrix.kernel "windows" -}}
+          {{ $suffix := ".exe" }}
+        {{- end -}}
+        {{- $dir := printf "%s.%s.%s" env.APP matrix.kernel matrix.arch -}}
+
+        mkdir -p build/archive
+        cp build/src/{{- env.APP -}}/LICENSE build/bin/{{ $dir }}/LICENSE
+
+        cd build/bin
+        tar -zcf ../archive/{{ $dir }}.tar.gz {{ $dir }}
+
+  chdir@template: build/src/{{- env.APP -}}
+  path: ./cmd/kubectl-convert
+  outputs@template:
+  - ../../bin/{{- env.APP -}}.{{- matrix.kernel -}}.{{- matrix.arch -}}/{{- env.APP -}}
+  ldflags:
+  - -s -w
+
+workflow:run:
+- name: index-kubectl-convert
+  env: *env
+  matrix: *matrix
+  hooks:
+    after:success:
+    - shell@file?str|template?str: templates/shell/write-manifest.tmpl
+
+  jobs:
+  - task@template: golang:build({{ env.APP }})
+  - shell: mkdir -p build/manifests
+  - shell@file?str|template?str: templates/shell/write-blob-entry.tmpl
+
+cosign:upload:
+- name: *name
+  env: *env
+  matrix: *matrix
+  hooks:
+    before:
+    - task: docker:login(ghcr)
+  signing@file: templates/cosign/signing-spec.yml
+  files@file: templates/cosign/files-spec.yml
+  image_names@file: templates/cosign/image-names.yml
+
+github:release:
+- name: *name
+  env: *env
+  hooks:
+    before:
+    - shell: |-
+        tag_name="release-${APP}-${GIT_COMMIT:0:8}"
+        git tag -m "${tag_name}" "${tag_name}"
+        git push origin "${tag_name}"
+
+  title@env: release-${APP}-${GIT_COMMIT:0:8}
+  tag@env: release-${APP}-${GIT_COMMIT:0:8}
+  notes@template: |-
+    Automated `{{ env.APP }}` Release for Downloads
+
+  draft: false
+  files:
+  - path@env: ./build/archive/${APP}.*.tar.gz

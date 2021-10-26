@@ -1,8 +1,6 @@
-# Template Repo
+# krew-index
 
-[![CI](https://github.com/arhat-dev/template-repo/workflows/CI/badge.svg)](https://github.com/arhat-dev/template-repo/actions?query=workflow%3ACI)
-
-Base template for more specific repo templates
+[![CI](https://github.com/arhat-dev/krew-index/workflows/CI/badge.svg)](https://github.com/arhat-dev/krew-index/actions?query=workflow%3ACI)
 
 ## LICENSE
 

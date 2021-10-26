@@ -1,0 +1,7 @@
+enabled: true
+annotations:
+  org.opencontainers.image.source: https://github.com/arhat-dev/krew-index
+private_key@env: ${COSIGN_PRIVATE_KEY}
+private_key_password@env: ${COSIGN_PRIVATE_KEY_PASSWORD}
+verify: true
+public_key@http: https://arhat.dev/.well-known/cosign.pub
