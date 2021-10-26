@@ -17,8 +17,8 @@ spec:
         matchLabels:
           arch: s390x
           os: linux
-      sha256: 849a867ba89886538cd9ab2ee5beaac28b741df7432db5aee921057b1044e9f6
-      uri: https://github.com/arhat-dev/krew-index/releases/download/release-kubectl-convert-faac5c9f/kubectl-convert.linux.s390x.tar.gz
+      sha256: d88fff58c58b73f818537be6818176a65c30833ee520527086023df718662eec
+      uri: https://github.com/arhat-dev/krew-index/releases/download/release-kubectl-convert-65e83513/kubectl-convert.linux.s390x.tar.gz
     - bin: kubectl-convert
       files:
         - from: kubectl-convert.linux.armv7/kubectl-convert
@@ -29,8 +29,8 @@ spec:
         matchLabels:
           arch: arm
           os: linux
-      sha256: 988bf5a4a2022ce91cd0157a64fea9edf433b8cef9fd192854f60f09b201e756
-      uri: https://github.com/arhat-dev/krew-index/releases/download/release-kubectl-convert-faac5c9f/kubectl-convert.linux.armv7.tar.gz
+      sha256: 69c8caf56986c988c9206807ee01d3e545bbcdebd264a414aecef1d876f2b9d4
+      uri: https://github.com/arhat-dev/krew-index/releases/download/release-kubectl-convert-65e83513/kubectl-convert.linux.armv7.tar.gz
     - bin: kubectl-convert
       files:
         - from: kubectl-convert.linux.x86/kubectl-convert
@@ -39,10 +39,10 @@ spec:
           to: .
       selector:
         matchLabels:
-          arch: 386
+          arch: "386"
           os: linux
-      sha256: 03ba20f9d969483bdeda1107e138e9c77c20a975cd1c4463efc78ce6ac0e07a0
-      uri: https://github.com/arhat-dev/krew-index/releases/download/release-kubectl-convert-faac5c9f/kubectl-convert.linux.x86.tar.gz
+      sha256: 78f7d784c11864bc92787f145144efd1542029161d452270a2a2d3dd04827183
+      uri: https://github.com/arhat-dev/krew-index/releases/download/release-kubectl-convert-65e83513/kubectl-convert.linux.x86.tar.gz
     - bin: kubectl-convert
       files:
         - from: kubectl-convert.linux.arm64/kubectl-convert
@@ -53,8 +53,8 @@ spec:
         matchLabels:
           arch: arm64
           os: linux
-      sha256: e046f1cc08561dfcd9c1d12402c9db289c3f17515962cc70ce475bbc24a3bbe4
-      uri: https://github.com/arhat-dev/krew-index/releases/download/release-kubectl-convert-faac5c9f/kubectl-convert.linux.arm64.tar.gz
+      sha256: d235b19337c43b04705708c083e9520a022fd07d7fed20d64e98e07322261719
+      uri: https://github.com/arhat-dev/krew-index/releases/download/release-kubectl-convert-65e83513/kubectl-convert.linux.arm64.tar.gz
     - bin: kubectl-convert
       files:
         - from: kubectl-convert.windows.arm64/kubectl-convert
@@ -65,8 +65,8 @@ spec:
         matchLabels:
           arch: arm64
           os: windows
-      sha256: 40feff749f71bca48de233450c60c7b3bd58c9d2fe5d4439841377e7c5114a9f
-      uri: https://github.com/arhat-dev/krew-index/releases/download/release-kubectl-convert-faac5c9f/kubectl-convert.windows.arm64.tar.gz
+      sha256: 8100d9a059d2ec4829f446523d56d20bc6c08c6fee6b093dbc1e152be0882e3b
+      uri: https://github.com/arhat-dev/krew-index/releases/download/release-kubectl-convert-65e83513/kubectl-convert.windows.arm64.tar.gz
     - bin: kubectl-convert
       files:
         - from: kubectl-convert.windows.amd64/kubectl-convert
@@ -77,8 +77,8 @@ spec:
         matchLabels:
           arch: amd64
           os: windows
-      sha256: 5979ea48c4c15acec3e706cad762c3685bddd969d9443b96d143c52ed8f55676
-      uri: https://github.com/arhat-dev/krew-index/releases/download/release-kubectl-convert-faac5c9f/kubectl-convert.windows.amd64.tar.gz
+      sha256: 4af79ee6f2ba4229313e2618cf05f8f675b9dbc6ca2465a18e7e7f5586f15957
+      uri: https://github.com/arhat-dev/krew-index/releases/download/release-kubectl-convert-65e83513/kubectl-convert.windows.amd64.tar.gz
     - bin: kubectl-convert
       files:
         - from: kubectl-convert.windows.armv7/kubectl-convert
@@ -89,8 +89,8 @@ spec:
         matchLabels:
           arch: arm
           os: windows
-      sha256: e81fcea2f7f91fb635041eb02da66ec86bd717bb2089eb36554b354f8d81c3bc
-      uri: https://github.com/arhat-dev/krew-index/releases/download/release-kubectl-convert-faac5c9f/kubectl-convert.windows.armv7.tar.gz
+      sha256: 26acde58981902972f66e5f0e3dce0b41b967287502c8d683e338c0fcc405a31
+      uri: https://github.com/arhat-dev/krew-index/releases/download/release-kubectl-convert-65e83513/kubectl-convert.windows.armv7.tar.gz
     - bin: kubectl-convert
       files:
         - from: kubectl-convert.linux.ppc64le/kubectl-convert
@@ -101,8 +101,8 @@ spec:
         matchLabels:
           arch: ppc64le
           os: linux
-      sha256: 28cac2ab1569fdc578f07dabe124a8c21503cc3a8c0f286794d37dcd00652a52
-      uri: https://github.com/arhat-dev/krew-index/releases/download/release-kubectl-convert-faac5c9f/kubectl-convert.linux.ppc64le.tar.gz
+      sha256: df40e08103b7856f97c52ff74ecbdb885f8bd90f04480d58144c21c4bd66a4da
+      uri: https://github.com/arhat-dev/krew-index/releases/download/release-kubectl-convert-65e83513/kubectl-convert.linux.ppc64le.tar.gz
     - bin: kubectl-convert
       files:
         - from: kubectl-convert.windows.x86/kubectl-convert
@@ -111,10 +111,10 @@ spec:
           to: .
       selector:
         matchLabels:
-          arch: 386
+          arch: "386"
           os: windows
-      sha256: aa8547bdb3075517c9ca4f67f83738d9276369f450e7c60c46387b28ff2cc508
-      uri: https://github.com/arhat-dev/krew-index/releases/download/release-kubectl-convert-faac5c9f/kubectl-convert.windows.x86.tar.gz
+      sha256: 5fd6952c316e0bc790663e7405112aa0479b4ed41c1fbdcfb6b3ef033812e4c4
+      uri: https://github.com/arhat-dev/krew-index/releases/download/release-kubectl-convert-65e83513/kubectl-convert.windows.x86.tar.gz
     - bin: kubectl-convert
       files:
         - from: kubectl-convert.darwin.arm64/kubectl-convert
@@ -125,8 +125,8 @@ spec:
         matchLabels:
           arch: arm64
           os: darwin
-      sha256: fe6ace3defb859a37516aaac3344bbe6a006dcc87351d55a3a584dd714b2d18b
-      uri: https://github.com/arhat-dev/krew-index/releases/download/release-kubectl-convert-faac5c9f/kubectl-convert.darwin.arm64.tar.gz
+      sha256: c889b13f36bd04f3712b7804efe83bc4dd5fec2ac4d5b9dae8e65d1f418087b2
+      uri: https://github.com/arhat-dev/krew-index/releases/download/release-kubectl-convert-65e83513/kubectl-convert.darwin.arm64.tar.gz
     - bin: kubectl-convert
       files:
         - from: kubectl-convert.darwin.amd64/kubectl-convert
@@ -137,7 +137,7 @@ spec:
         matchLabels:
           arch: amd64
           os: darwin
-      sha256: 37e6cc277d76450938c7515a5829b48477968cebcfb8cd3697986b899499cb23
-      uri: https://github.com/arhat-dev/krew-index/releases/download/release-kubectl-convert-faac5c9f/kubectl-convert.darwin.amd64.tar.gz
+      sha256: aaec2bf229e05b7e12aacc8902c4014791e0423d1edfdb14a9588d32330a8074
+      uri: https://github.com/arhat-dev/krew-index/releases/download/release-kubectl-convert-65e83513/kubectl-convert.darwin.amd64.tar.gz
   shortDescription: '{{- env.SHORT_DESCRIPTION | default env.APP -}}'
   version: v1.22.2
