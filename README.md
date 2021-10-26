@@ -2,6 +2,8 @@
 
 [![CI](https://github.com/arhat-dev/krew-index/workflows/CI/badge.svg)](https://github.com/arhat-dev/krew-index/actions?query=workflow%3ACI)
 
+__NOTE:__ Your SHOULD NEVER edit yaml files in plugins dir manually.
+
 ## Workflow
 
 ### Add a new plugin `kubectl-FOO`
