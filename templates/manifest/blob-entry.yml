@@ -4,10 +4,11 @@
 - selector:
     matchLabels:
       os: ${MATRIX_KERNEL}
-      arch@template: |-
+      # this str type hint ensures quotes around values like 386
+      arch@template?str: |-
         {{- archconv.GolangArch "${MATRIX_ARCH}" -}}
 
-  sha256@transform:
+  sha256@transform?str:
     value@shell: &openssl_dgst openssl dgst -sha256 build/archive/${APP}.${MATRIX_KERNEL}.${MATRIX_ARCH}.tar.gz
     ops:
     - template: &get_checksum_from_openssl_dgst_output |-
