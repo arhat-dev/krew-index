@@ -15,6 +15,17 @@
       - `SHORT_DESCRIPTION` (mandatory field for a plugin manifest)
       - `DESCRIPTION`
       - `CAVEATES`
+    - with jobs to produce `build/archive/${APP}.${KERNEL}.${ARCH}.tar.gz`
+    - with hooks blew
+
+    ```yaml
+    hooks:
+    after:matrix:success:
+    - shell: mkdir -p build/manifests
+    - shell@file?str|template?str: templates/shell/write-blob-entry.tmpl
+    after:success:
+    - shell@file?str|template?str: templates/shell/write-manifest.tmpl
+    ```
 
 - Include the new plugin in the [github workflows build matrix](./.github/workflows/ci.yaml)
 
