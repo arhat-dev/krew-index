@@ -30,28 +30,7 @@ golang:build:
   - name: CAVEATES
     value: ""
 
-  matrix: &matrix
-    kernel:
-    - linux
-    - windows
-    arch:
-    - amd64
-    - arm64
-    - armv7
-    - x86
-    # armv6 and armv5 are not set since krew only accepts `arm`
-    # and armv7 is the most commonly used arch
-    # - armv6
-    # - armv5
-    include:
-    - kernel: [darwin]
-      arch:
-      - amd64
-      - arm64
-    - kernel: [linux]
-      arch:
-      - s390x
-      - ppc64le
+  matrix@file: &matrix templates/matrix-kubectl-convert.yml
   hooks:
     before:
     - shell@template: |-
@@ -84,7 +63,7 @@ golang:build:
 workflow:run:
 - name: index-kubectl-convert
   env: *env
-  matrix: *matrix
+  matrix@file: *matrix
   hooks:
     after:matrix:success:
     - shell: mkdir -p build/manifests
@@ -94,14 +73,3 @@ workflow:run:
 
   jobs:
   - task@template: golang:build({{ env.APP }})
-
-cosign:upload:
-- name: *name
-  env: *env
-  matrix: *matrix
-  hooks:
-    before:
-    - task: docker:login(ghcr)
-  signing@file: templates/cosign/signing-spec.yml
-  files@file: templates/cosign/files-spec.yml
-  image_names@file: templates/cosign/image-names.yml

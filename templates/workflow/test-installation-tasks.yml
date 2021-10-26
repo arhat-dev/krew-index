@@ -1,0 +1,24 @@
+{{-
+  $plugins_str := eval.Shell "find templates -name 'kubectl-*.yml'"
+    | removePrefix "templates/"
+    | removeSuffix ".yml"
+-}}
+{{- range $_, $v := split $plugins_str "\n" -}}
+{{- if $v }}
+- name: test-install-{{- $v }}
+  env:
+  - name: APP
+    value: {{ $v }}
+  matrix@file: templates/matrix-{{ $v }}.yml
+  jobs:
+  - shell@env: |-
+      krew uninstall {{ trimPrefix "kubectl-" $v }} >/dev/null 2>&1 || true
+
+      KREW_OS="$(template:archconv.GolangOS \"${MATRIX_KERNEL}\")" \
+      KREW_ARCH="$(template:archconv.GolangArch \"${MATRIX_ARCH}\")" \
+        krew install \
+          --manifest="plugins/{{ trimPrefix "kubectl-" $v }}.yaml" \
+          --archive="build/archive/{{ $v }}.${MATRIX_KERNEL}.${MATRIX_ARCH}.tar.gz"
+      krew uninstall {{ trimPrefix "kubectl-" $v }}
+{{- end }}
+{{- end }}

@@ -1,0 +1,17 @@
+{{-
+  $plugins_str := eval.Shell "find templates -name 'kubectl-*.yml'"
+    | removePrefix "templates/"
+    | removeSuffix ".yml"
+-}}
+{{- range $_, $v := split $plugins_str "\n" -}}
+{{- if $v }}
+- name: {{ $v }}
+  matrix@file: templates/matrix-{{ $v }}.yml
+  hooks:
+    before:
+    - task: docker:login(ghcr)
+  signing@file: templates/cosign/signing-spec.yml
+  files@file: templates/cosign/files-spec.yml
+  image_names@file: templates/cosign/image-names.yml
+{{- end }}
+{{- end }}

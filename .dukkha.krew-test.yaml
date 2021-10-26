@@ -1,0 +1,10 @@
+# TODO: move it to template/generated-tasks.yml
+#       then we should have unified entrypoint without having to
+#       set config file separately (run as a command instead of native task)
+#       cannot do it due to dukkha bug (probably in inline map handling)
+
+tools:
+  workflow:
+  - name: local
+
+workflow:run@file?str|template: templates/workflow/test-installation-tasks.yml

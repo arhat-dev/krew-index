@@ -1,4 +1,5 @@
 include:
+- templates/generated-tasks.yml
 - templates/kubectl-*.yml
 
 global:
@@ -54,6 +55,10 @@ workflow:run:
 
   - task@template: workflow:run(index-{{- matrix.plugin -}}, {})
 
+  - shell@template: |-
+      dukkha -c .dukkha.krew-test.yaml \
+        run workflow local run test-install-{{- matrix.plugin }}
+
   # TODO: currently ghcr.io requires authorization for direct blob download
   #       so we have to use github release for blob storage
   # - task@template: cosign:upload({{ matrix.plugin }}, {})
@@ -62,14 +67,14 @@ workflow:run:
   # will be with newer commit hash
   - task@template: github:release({{ matrix.plugin }}, {})
 
-  - shell@env: |-
+  - shell@template: |-
       git add --all .
 
       if git diff-index --quiet HEAD; then
         exit 0
       fi
 
-      git commit -m "chore: Update krew index for ${MATRIX_PLUGIN}"
+      git commit -m "chore: Update krew index for {{ matrix.plugin }}"
       git pull --rebase
       git push
 
@@ -78,5 +83,3 @@ docker:login:
   registry: ghcr.io
   username: ${GHCR_USER}
   password@env: ${GHCR_PASS}
-
-github:release@file|template: templates/github/release-tasks.yml

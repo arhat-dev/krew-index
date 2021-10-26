@@ -8,6 +8,8 @@ __NOTE:__ Your SHOULD NEVER edit yaml files in plugins dir manually.
 
 ### Add a new plugin `kubectl-FOO`
 
+- Create a matrix file at [templates/matrix-kubectl-FOO.yaml](./templates)
+  - With all kernel/arch pairs defined for the plugin
 - Create a plugin config at [templates/kubectl-FOO.yaml](./templates)
   - Add a `workflow:run` task for the plugin
     - with name `index-kubectl-FOO`
@@ -20,14 +22,14 @@ __NOTE:__ Your SHOULD NEVER edit yaml files in plugins dir manually.
     - with jobs to produce `build/archive/${APP}.${KERNEL}.${ARCH}.tar.gz`
     - with hooks blew
 
-    ```yaml
-    hooks:
-    after:matrix:success:
-    - shell: mkdir -p build/manifests
-    - shell@file?str|template?str: templates/shell/write-blob-entry.tmpl
-    after:success:
-    - shell@file?str|template?str: templates/shell/write-manifest.tmpl
-    ```
+      ```yaml
+      hooks:
+      after:matrix:success:
+      - shell: mkdir -p build/manifests
+      - shell@file?str|template?str: templates/shell/write-blob-entry.tmpl
+      after:success:
+      - shell@file?str|template?str: templates/shell/write-manifest.tmpl
+      ```
 
 - Include the new plugin in the [github workflows build matrix](./.github/workflows/ci.yaml)
 

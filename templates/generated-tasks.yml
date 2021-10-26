@@ -1,0 +1,2 @@
+github:release@file?str|template: templates/github/release-tasks.yml
+cosign:upload@file?str|template: templates/cosign/upload-tasks.yml
