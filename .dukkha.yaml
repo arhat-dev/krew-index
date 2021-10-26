@@ -78,3 +78,34 @@ docker:login:
   registry: ghcr.io
   username: ${GHCR_USER}
   password@env: ${GHCR_PASS}
+
+github:release@template: |-
+  {{-
+    $plugins_str := eval.Shell "find templates -name 'kubectl-*.yml'"
+      | removePrefix "templates/"
+      | removeSuffix ".yml"
+  -}}
+  {{- range $_, $v := split $plugins_str "\n" -}}
+  {{- if $v }}
+  - name: {{ $v }}
+    env:
+    - name: APP
+      value: {{ $v }}
+    hooks:
+      before:
+      - shell: |-
+          tag_name="release-${APP}-${GIT_COMMIT:0:8}"
+          git tag -m "${tag_name}" "${tag_name}"
+          git push origin "${tag_name}"
+
+    title@env: release-${APP}-${GIT_COMMIT:0:8}
+    tag@env: release-${APP}-${GIT_COMMIT:0:8}
+    notes@template: |-
+      Automated `{{ env.APP }}` Release for Downloads
+
+    draft: false
+    files:
+    - path@env: ./build/archive/${APP}.*.tar.gz
+  {{- end }}
+  {{- end }}
+
