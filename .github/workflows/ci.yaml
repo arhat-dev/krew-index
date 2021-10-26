@@ -8,10 +8,6 @@ on:
         description: reason to run this workflow
         required: false
         default: test
-  check_run:
-    types:
-    - rerequested
-    - requested_action
   pull_request:
     branches:
     - master
@@ -29,3 +25,45 @@ jobs:
     - name: Lint
       run: |
         make lint.all
+
+  update:
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        plugin:
+        - kubectl-convert
+      fail-fast: false
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        ssh-key: ${{ secrets.ORG_SSH_KEY }}
+
+    - uses: actions/setup-go@v2
+      with:
+        go-version: 1.17.x
+
+    - name: Install dukkha
+      uses: arhat-dev/actions-setup-dukkha@master
+
+    - name: Install cosign
+      uses: sigstore/cosign-installer@v1.2.0
+      with:
+        cosign-release: v1.2.1
+
+    - name: Build and Push ${{ matrix.plugin }}
+      env:
+        COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
+        COSIGN_PRIVATE_KEY_PASSWORD: ${{ secrets.COSIGN_PRIVATE_KEY_PASSWORD }}
+        GHCR_USER: ${{ github.actor }}
+        GHCR_PASS: ${{ secrets.GITHUB_TOKEN }}
+
+        # required env for github cli (gh)
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |-
+        dukkha run workflow local run update-index \
+          -m plugin=${{ matrix.plugin }}
+
+    - name: Remove dukkha cache
+      if: always()
+      run: |
+        rm -rf .dukkha/cache

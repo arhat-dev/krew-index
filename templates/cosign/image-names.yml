@@ -1,0 +1,3 @@
+- image@template: |-
+    ghcr.io/arhat-dev/krew-index/dist/{{- env.APP -}}:
+      {{- env.VERSION -}}-{{- matrix.kernel -}}-{{- matrix.arch -}}

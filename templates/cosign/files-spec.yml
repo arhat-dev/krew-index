@@ -1,0 +1,3 @@
+- path@template: |-
+    build/archive/{{- env.APP -}}.{{- matrix.kernel -}}.{{- matrix.arch -}}.tar.gz
+  content_type: application/gzip

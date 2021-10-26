@@ -1,0 +1,8 @@
+{{-
+  $_ := eval.Env values.templates.manifest_blob_entry
+    | os.WriteFile (
+      printf "build/manifests/%s.%s.%s.yml"
+              env.APP matrix.kernel matrix.arch
+    )
+-}}
+: nop

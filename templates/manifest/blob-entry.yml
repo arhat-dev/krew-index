@@ -1,0 +1,22 @@
+# NOTE: this template will be evaluated by eval.Env first
+#       make sure we have matrix related variables resolved now
+
+- selector:
+    matchLabels:
+      os: ${MATRIX_KERNEL}
+      arch@template: |-
+        {{- archconv.GolangArch "${MATRIX_ARCH}" -}}
+
+  sha256@transform:
+    value@shell: &openssl_dgst openssl dgst -sha256 build/archive/${APP}.${MATRIX_KERNEL}.${MATRIX_ARCH}.tar.gz
+    ops:
+    - template: &get_checksum_from_openssl_dgst_output |-
+        {{- index (split .Value "= ") 1 | trimSpace -}}
+  uri: https://github.com/arhat-dev/krew-index/releases/download/release-${APP}-${GIT_COMMIT:0:8}/${APP}.${MATRIX_KERNEL}.${MATRIX_ARCH}.tar.gz
+
+  bin: ${APP}
+  files:
+  - from: ${APP}.${MATRIX_KERNEL}.${MATRIX_ARCH}/${APP}
+    to: .
+  - from: ${APP}.${MATRIX_KERNEL}.${MATRIX_ARCH}/LICENSE
+    to: .
