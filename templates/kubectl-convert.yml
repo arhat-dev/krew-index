@@ -104,22 +104,3 @@ cosign:upload:
   signing@file: templates/cosign/signing-spec.yml
   files@file: templates/cosign/files-spec.yml
   image_names@file: templates/cosign/image-names.yml
-
-github:release:
-- name: *name
-  env: *env
-  hooks:
-    before:
-    - shell: |-
-        tag_name="release-${APP}-${GIT_COMMIT:0:8}"
-        git tag -m "${tag_name}" "${tag_name}"
-        git push origin "${tag_name}"
-
-  title@env: release-${APP}-${GIT_COMMIT:0:8}
-  tag@env: release-${APP}-${GIT_COMMIT:0:8}
-  notes@template: |-
-    Automated `{{ env.APP }}` Release for Downloads
-
-  draft: false
-  files:
-  - path@env: ./build/archive/${APP}.*.tar.gz

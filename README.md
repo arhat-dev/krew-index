@@ -15,8 +15,6 @@
       - `SHORT_DESCRIPTION` (mandatory field for a plugin manifest)
       - `DESCRIPTION`
       - `CAVEATES`
-  - Add a `github:release` task for the plugin
-    - with name `kubectl-FOO`
 
 - Include the new plugin in the [github workflows build matrix](./.github/workflows/ci.yaml)
 

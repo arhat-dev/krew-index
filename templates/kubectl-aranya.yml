@@ -1,0 +1,12 @@
+# workflow:run:
+# - name: index-kubectl-aranya
+#   # env: *env
+#   # matrix: *matrix
+#   hooks:
+#     after:success:
+#     - shell@file?str|template?str: templates/shell/write-manifest.tmpl
+#
+#   jobs:
+#   # - task@template: golang:build({{ env.APP }})
+#   - shell: mkdir -p build/manifests
+#   - shell@file?str|template?str: templates/shell/write-blob-entry.tmpl
