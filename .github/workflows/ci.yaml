@@ -49,13 +49,16 @@ jobs:
     - name: Install dukkha
       uses: arhat-dev/actions-setup-dukkha@master
 
+    - name: Install kubectl
+      uses: azure/setup-kubectl@v1
+      with:
+        version: v1.21.6
+
     - name: Install krew
       uses: arhat-dev/actions-setup-krew@master
 
     - name: Install cosign
-      uses: sigstore/cosign-installer@v1.2.0
-      with:
-        cosign-release: v1.2.1
+      uses: sigstore/cosign-installer@main
 
     - name: Build and Push ${{ matrix.plugin }}
       env:
