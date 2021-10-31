@@ -65,8 +65,9 @@ workflow:run:
   env: *env
   matrix@file: *matrix
   hooks:
-    after:matrix:success:
+    before:
     - shell: mkdir -p build/manifests
+    after:matrix:success:
     - shell@file?str|template?str: templates/shell/write-blob-entry.tmpl
     after:success:
     - shell@file?str|template?str: templates/shell/write-manifest.tmpl

@@ -24,11 +24,14 @@ __NOTE:__ Your SHOULD NEVER edit yaml files in plugins dir manually.
 
       ```yaml
       hooks:
-      after:matrix:success:
-      - shell: mkdir -p build/manifests
-      - shell@file?str|template?str: templates/shell/write-blob-entry.tmpl
-      after:success:
-      - shell@file?str|template?str: templates/shell/write-manifest.tmpl
+        before:
+        - shell: mkdir -p build/manifests
+
+        after:matrix:success:
+        - shell@file?str|template?str: templates/shell/write-blob-entry.tmpl
+
+        after:success:
+        - shell@file?str|template?str: templates/shell/write-manifest.tmpl
       ```
 
 - Include the new plugin in the [github workflows build matrix](./.github/workflows/ci.yaml)

@@ -1,7 +1,11 @@
 {{-
-  $_ := eval.Env values.templates.manifest_header
+  $err := eval.Env values.templates.manifest_header
     | os.WriteFile (printf "build/manifests/%s.yaml" env.APP)
 -}}
+
+{{- if $err -}}
+  {{- fail (printf "failed to write manifest %v" $err) -}}
+{{- end -}}
 
 dukkha render build/manifests/{{- env.APP -}}.yaml \
   -o plugins/{{- trimPrefix "kubectl-" env.APP -}}.yaml

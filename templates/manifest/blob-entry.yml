@@ -1,5 +1,5 @@
 # NOTE: this template will be evaluated by eval.Env first
-#       make sure we have matrix related variables resolved now
+#       make sure we have matrix related variables resolved at that time
 
 - selector:
     matchLabels:
