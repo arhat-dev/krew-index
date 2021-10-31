@@ -56,8 +56,10 @@ jobs:
 
     - name: Install krew
       uses: arhat-dev/actions-setup-krew@master
-    - name: Prepare PATH for krew
-      run: echo "${HOME}/.krew/bin" >>"${GITHUB_PATH}"
+    - name: Prepare krew
+      run: |-
+        echo "${HOME}/.krew/bin" >>"${GITHUB_PATH}"
+        kubectl krew update
 
     - name: Install cosign
       uses: sigstore/cosign-installer@main
