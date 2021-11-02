@@ -9,7 +9,7 @@ metadata:
 spec:
   version: ${VERSION}
   homepage: ${HOMEPAGE}
-  shortDescription: |-
+  shortDescription@template?str: |-
     {{- env.SHORT_DESCRIPTION | default env.APP -}}
   description@template?str: |-
     {{- env.DESCRIPTION -}}

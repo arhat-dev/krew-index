@@ -11,9 +11,9 @@ __NOTE:__ Your SHOULD NEVER edit yaml files in plugins dir manually.
 - Create a matrix file at [templates/matrix-kubectl-FOO.yaml](./templates)
   - With all kernel/arch pairs defined for the plugin
 - Create a plugin config at [templates/kubectl-FOO.yaml](./templates)
-  - Add a `workflow:run` task for the plugin
+  - Add a `workflow:run` task for the plugin (NOTE: there should be a rendering suffix to the workflow definition)
     - with name `index-kubectl-FOO`
-    - with env
+    - with env values
       - `APP=kubectl-FOO`
       - `VERSION=v{MAJOR}.{MINOR}.{FIX}`
       - `SHORT_DESCRIPTION` (mandatory field for a plugin manifest)

@@ -60,7 +60,7 @@ golang:build:
   ldflags:
   - -s -w
 
-workflow:run:
+workflow:run@:
 - name: index-kubectl-convert
   env: *env
   matrix@file: *matrix

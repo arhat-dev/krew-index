@@ -25,61 +25,69 @@ tools:
   github:
   - name: local
 
-workflow:run:
-- name: update-index
-  matrix:
-    plugin@template: |-
-      {{-
-        eval.Shell "find templates -name 'kubectl-*.yml'"
-          | removePrefix "templates/"
-          | removeSuffix ".yml"
-          | addPrefix "- "
-      -}}
-  hooks:
-    before:
-    - shell: |-
-        git config user.email '72795724+arhatbot@users.noreply.github.com'
-        git config user.name 'Arhat Bot'
+workflow:run@!:
+  merge:
+  - value@file?str|template: templates/workflow/test-installation-tasks.yml
+    resolve: false
 
-    after:
-    - shell: |-
-        git config --unset user.email
-        git config --unset user.name
+  resolve: false
+  value:
+  - name: update-index
+    matrix:
+      plugin@template: |-
+        {{-
+          eval.Shell "find templates -name 'kubectl-*.yml'"
+            | removePrefix "templates/"
+            | removeSuffix ".yml"
+            | addPrefix "- "
+        -}}
+    hooks:
+      before:
+      - shell: |-
+          git config user.email '72795724+arhatbot@users.noreply.github.com'
+          git config user.name 'Arhat Bot'
 
-  jobs:
-  - shell@template: |-
-      rm -rf \
-        build/archive/{{- matrix.plugin }}.* \
-        build/bin/{{- matrix.plugin }}.* \
-        build/manifests/{{- matrix.plugin }}.*
+      after:
+      - shell: |-
+          git config --unset user.email
+          git config --unset user.name
 
-  - task@template: workflow:run(index-{{- matrix.plugin -}}, {})
+    jobs:
+    - shell@template: |-
+        rm -rf \
+          build/archive/{{- matrix.plugin }}.* \
+          build/bin/{{- matrix.plugin }}.* \
+          build/manifests/{{- matrix.plugin }}.*
 
-  - shell@template: |-
-      dukkha -c .dukkha.krew-test.yaml \
-        run workflow local run test-install-{{- matrix.plugin }}
+    - task@template: workflow:run(index-{{- matrix.plugin -}}, {})
+    - task@template: workflow:run(test-install-{{- matrix.plugin -}}, {})
+      continue_on_error: true
 
-  # TODO: currently ghcr.io requires authorization for direct blob download
-  #       so we have to use github release for blob storage
-  # - task@template: cosign:upload({{ matrix.plugin }}, {})
+    # TODO: currently ghcr.io requires authorization for direct blob download
+    #       so we have to use github release for blob storage
+    # - task@template: cosign:upload({{ matrix.plugin }}, {})
 
-  # github release MUST happen before git commit, or the urls in index
-  # will be with newer commit hash
-  - task@template: github:release({{ matrix.plugin }}, {})
+    # github release MUST happen before git commit, or the urls in index
+    # will be with newer commit hash
+    - task@template: github:release({{ matrix.plugin }}, {})
 
-  - shell@template: |-
-      git add --all .
+    - shell@template: |-
+        git add --all .
 
-      if git diff-index --quiet HEAD; then
-        exit 0
-      fi
+        if git diff-index --quiet HEAD; then
+          exit 0
+        fi
 
-      git commit -m "chore: Update krew index for {{ matrix.plugin }}"
-      git pull --rebase
-      git push
+        git commit -m "chore: Update krew index for {{ matrix.plugin }}"
+        git pull --rebase
+        git push
 
 docker:login:
 - name: ghcr
   registry: ghcr.io
   username: ${GHCR_USER}
   password@env: ${GHCR_PASS}
+
+# generated tasks
+github:release@file?str|template: templates/github/release-tasks.yml
+cosign:upload@file?str|template: templates/cosign/upload-tasks.yml
