@@ -1,0 +1,208 @@
+name: krew-issue-repro
+
+# yamllint disable-line rule:truthy
+on:
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: reason to run this workflow
+        required: false
+        default: test
+  push:
+    branches:
+    - krew-issue-repro
+    paths-ignore:
+    - plugins/**
+    tags:
+    - v*
+
+jobs:
+  reproduce:
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        ssh-key: ${{ secrets.ORG_SSH_KEY }}
+
+    - uses: actions/setup-go@v2
+      with:
+        go-version: 1.17.x
+
+    - name: Install dukkha
+      uses: arhat-dev/actions-setup-dukkha@master
+
+    - name: Install kubectl
+      uses: azure/setup-kubectl@v1
+      with:
+        version: v1.21.6
+
+    - name: Install krew
+      uses: arhat-dev/actions-setup-krew@master
+    - name: Prepare krew
+      run: |-
+        echo "${HOME}/.krew/bin" >>"${GITHUB_PATH}"
+        kubectl krew update
+
+    - name: Install cosign
+      uses: sigstore/cosign-installer@main
+
+    - name: Build ${{ matrix.plugin }}
+      run: |-
+        dukkha run workflow local run index-kubectl-convert \
+          --translate-ansi-stream=false \
+          --force-color
+
+    - name: Test krew redundent install/uninstall
+      continue-on-error: true
+      run: |-
+        krew uninstall convert >/dev/null 2>&1 || true
+
+        KREW_OS="linux" KREW_ARCH="amd64" \
+          krew install --manifest="plugins/convert.yaml" \
+            --archive="build/archive/kubectl-convert.linux.amd64.tar.gz"
+        krew uninstall convert
+        krew uninstall convert >/dev/null 2>&1 || true
+
+        KREW_OS="windows" KREW_ARCH="amd64" \
+          krew install --manifest="plugins/convert.yaml" \
+            --archive="build/archive/kubectl-convert.windows.amd64.tar.gz"
+        krew uninstall convert
+        krew uninstall convert >/dev/null 2>&1 || true
+
+        KREW_OS="linux" KREW_ARCH="arm64" \
+          krew install --manifest="plugins/convert.yaml" \
+            --archive="build/archive/kubectl-convert.linux.arm64.tar.gz"
+        krew uninstall convert
+        krew uninstall convert >/dev/null 2>&1 || true
+
+        KREW_OS="windows" KREW_ARCH="arm64" \
+          krew install --manifest="plugins/convert.yaml" \
+            --archive="build/archive/kubectl-convert.windows.arm64.tar.gz"
+        krew uninstall convert
+        krew uninstall convert >/dev/null 2>&1 || true
+
+        KREW_OS="linux" KREW_ARCH="arm" \
+          krew install --manifest="plugins/convert.yaml" \
+            --archive="build/archive/kubectl-convert.linux.armv7.tar.gz"
+        krew uninstall convert
+        krew uninstall convert >/dev/null 2>&1 || true
+
+        KREW_OS="windows" KREW_ARCH="arm" \
+          krew install --manifest="plugins/convert.yaml" \
+            --archive="build/archive/kubectl-convert.windows.armv7.tar.gz"
+        krew uninstall convert
+        krew uninstall convert >/dev/null 2>&1 || true
+
+        KREW_OS="linux" KREW_ARCH="386" \
+          krew install --manifest="plugins/convert.yaml" \
+            --archive="build/archive/kubectl-convert.linux.x86.tar.gz"
+        krew uninstall convert
+        krew uninstall convert >/dev/null 2>&1 || true
+
+        KREW_OS="windows" KREW_ARCH="386" \
+          krew install --manifest="plugins/convert.yaml" \
+            --archive="build/archive/kubectl-convert.windows.x86.tar.gz"
+        krew uninstall convert
+        krew uninstall convert >/dev/null 2>&1 || true
+
+        KREW_OS="darwin" KREW_ARCH="amd64" \
+          krew install --manifest="plugins/convert.yaml" \
+            --archive="build/archive/kubectl-convert.darwin.amd64.tar.gz"
+        krew uninstall convert
+        krew uninstall convert >/dev/null 2>&1 || true
+
+        KREW_OS="darwin" KREW_ARCH="arm64" \
+          krew install --manifest="plugins/convert.yaml" \
+            --archive="build/archive/kubectl-convert.darwin.arm64.tar.gz"
+        krew uninstall convert
+        krew uninstall convert >/dev/null 2>&1 || true
+
+        KREW_OS="linux" KREW_ARCH="s390x" \
+          krew install --manifest="plugins/convert.yaml" \
+            --archive="build/archive/kubectl-convert.linux.s390x.tar.gz"
+        krew uninstall convert
+        krew uninstall convert >/dev/null 2>&1 || true
+
+        KREW_OS="linux" KREW_ARCH="ppc64le" \
+          krew install --manifest="plugins/convert.yaml" \
+            --archive="build/archive/kubectl-convert.linux.ppc64le.tar.gz"
+        krew uninstall convert
+
+    - name: Test krew install/uninstall
+      if: always()
+      continue-on-error: true
+      run: |-
+        krew uninstall convert >/dev/null 2>&1 || true
+        KREW_OS="linux" KREW_ARCH="amd64" \
+          krew install --manifest="plugins/convert.yaml" \
+            --archive="build/archive/kubectl-convert.linux.amd64.tar.gz"
+
+        krew uninstall convert >/dev/null 2>&1 || true
+        KREW_OS="windows" KREW_ARCH="amd64" \
+          krew install --manifest="plugins/convert.yaml" \
+            --archive="build/archive/kubectl-convert.windows.amd64.tar.gz"
+
+        krew uninstall convert >/dev/null 2>&1 || true
+
+        KREW_OS="linux" KREW_ARCH="arm64" \
+          krew install --manifest="plugins/convert.yaml" \
+            --archive="build/archive/kubectl-convert.linux.arm64.tar.gz"
+
+        krew uninstall convert >/dev/null 2>&1 || true
+
+        KREW_OS="windows" KREW_ARCH="arm64" \
+          krew install --manifest="plugins/convert.yaml" \
+            --archive="build/archive/kubectl-convert.windows.arm64.tar.gz"
+
+        krew uninstall convert >/dev/null 2>&1 || true
+
+        KREW_OS="linux" KREW_ARCH="arm" \
+          krew install --manifest="plugins/convert.yaml" \
+            --archive="build/archive/kubectl-convert.linux.armv7.tar.gz"
+
+        krew uninstall convert >/dev/null 2>&1 || true
+
+        KREW_OS="windows" KREW_ARCH="arm" \
+          krew install --manifest="plugins/convert.yaml" \
+            --archive="build/archive/kubectl-convert.windows.armv7.tar.gz"
+
+        krew uninstall convert >/dev/null 2>&1 || true
+
+        KREW_OS="linux" KREW_ARCH="386" \
+          krew install --manifest="plugins/convert.yaml" \
+            --archive="build/archive/kubectl-convert.linux.x86.tar.gz"
+
+        krew uninstall convert >/dev/null 2>&1 || true
+
+        KREW_OS="windows" KREW_ARCH="386" \
+          krew install --manifest="plugins/convert.yaml" \
+            --archive="build/archive/kubectl-convert.windows.x86.tar.gz"
+
+        krew uninstall convert >/dev/null 2>&1 || true
+
+        KREW_OS="darwin" KREW_ARCH="amd64" \
+          krew install --manifest="plugins/convert.yaml" \
+            --archive="build/archive/kubectl-convert.darwin.amd64.tar.gz"
+
+        krew uninstall convert >/dev/null 2>&1 || true
+
+        KREW_OS="darwin" KREW_ARCH="arm64" \
+          krew install --manifest="plugins/convert.yaml" \
+            --archive="build/archive/kubectl-convert.darwin.arm64.tar.gz"
+
+        krew uninstall convert >/dev/null 2>&1 || true
+
+        KREW_OS="linux" KREW_ARCH="s390x" \
+          krew install --manifest="plugins/convert.yaml" \
+            --archive="build/archive/kubectl-convert.linux.s390x.tar.gz"
+
+        krew uninstall convert >/dev/null 2>&1 || true
+
+        KREW_OS="linux" KREW_ARCH="ppc64le" \
+          krew install --manifest="plugins/convert.yaml" \
+            --archive="build/archive/kubectl-convert.linux.ppc64le.tar.gz"
+
+    - name: Remove dukkha cache
+      if: always()
+      run: |
+        rm -rf .dukkha/cache
