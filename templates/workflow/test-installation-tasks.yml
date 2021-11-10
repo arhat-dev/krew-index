@@ -20,5 +20,6 @@
           --manifest="plugins/{{ trimPrefix "kubectl-" $v }}.yaml" \
           --archive="build/archive/{{ $v }}.${MATRIX_KERNEL}.${MATRIX_ARCH}.tar.gz"
       krew uninstall {{ trimPrefix "kubectl-" $v }}
+    continue_on_error: true
 {{- end }}
 {{- end }}
