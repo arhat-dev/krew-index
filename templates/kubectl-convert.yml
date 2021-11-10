@@ -24,7 +24,7 @@ golang:build:
         /content/en/docs/tasks/tools/included/kubectl-convert-overview.md
       ops:
       - template: |-
-          {{- $parts := split .Value "---\n" -}}
+          {{- $parts := split VALUE "---\n" -}}
           {{- index $parts (add (len $parts) -1) | trimPrefix "\n" -}}
 
   - name: CAVEATES

@@ -9,6 +9,8 @@ global:
       manifest_blob_entry@file?str: templates/manifest/blob-entry.yml
 
 renderers:
+  env:
+    enable_exec: true
   http:
     enable_cache: true
     cache_max_age: 5h
