@@ -53,6 +53,7 @@ jobs:
     - name: Build ${{ matrix.plugin }}
       run: |-
         dukkha run workflow local run index-kubectl-convert \
+          -m kernel!=windows \
           --translate-ansi-stream=false \
           --force-color
 
@@ -69,12 +70,12 @@ jobs:
         krew uninstall convert || tree "${HOME}/.krew"
         krew uninstall convert >/dev/null 2>&1 || tree "${HOME}/.krew"
 
-        tree "${HOME}/.krew"
-        KREW_OS="windows" KREW_ARCH="amd64" \
-          krew install --manifest="plugins/convert.yaml" \
-            --archive="build/archive/kubectl-convert.windows.amd64.tar.gz" || tree "${HOME}/.krew"
-        krew uninstall convert || tree "${HOME}/.krew"
-        krew uninstall convert >/dev/null 2>&1 || tree "${HOME}/.krew"
+        # tree "${HOME}/.krew"
+        # KREW_OS="windows" KREW_ARCH="amd64" \
+        #   krew install --manifest="plugins/convert.yaml" \
+        #     --archive="build/archive/kubectl-convert.windows.amd64.tar.gz" || tree "${HOME}/.krew"
+        # krew uninstall convert || tree "${HOME}/.krew"
+        # krew uninstall convert >/dev/null 2>&1 || tree "${HOME}/.krew"
 
         tree "${HOME}/.krew"
         KREW_OS="linux" KREW_ARCH="arm64" \
@@ -83,12 +84,12 @@ jobs:
         krew uninstall convert || tree "${HOME}/.krew"
         krew uninstall convert >/dev/null 2>&1 || tree "${HOME}/.krew"
 
-        tree "${HOME}/.krew"
-        KREW_OS="windows" KREW_ARCH="arm64" \
-          krew install --manifest="plugins/convert.yaml" \
-            --archive="build/archive/kubectl-convert.windows.arm64.tar.gz" || tree "${HOME}/.krew"
-        krew uninstall convert || tree "${HOME}/.krew"
-        krew uninstall convert >/dev/null 2>&1 || tree "${HOME}/.krew"
+        # tree "${HOME}/.krew"
+        # KREW_OS="windows" KREW_ARCH="arm64" \
+        #   krew install --manifest="plugins/convert.yaml" \
+        #     --archive="build/archive/kubectl-convert.windows.arm64.tar.gz" || tree "${HOME}/.krew"
+        # krew uninstall convert || tree "${HOME}/.krew"
+        # krew uninstall convert >/dev/null 2>&1 || tree "${HOME}/.krew"
 
         tree "${HOME}/.krew"
         KREW_OS="linux" KREW_ARCH="arm" \
@@ -97,12 +98,12 @@ jobs:
         krew uninstall convert || tree "${HOME}/.krew"
         krew uninstall convert >/dev/null 2>&1 || tree "${HOME}/.krew"
 
-        tree "${HOME}/.krew"
-        KREW_OS="windows" KREW_ARCH="arm" \
-          krew install --manifest="plugins/convert.yaml" \
-            --archive="build/archive/kubectl-convert.windows.armv7.tar.gz" || tree "${HOME}/.krew"
-        krew uninstall convert || tree "${HOME}/.krew"
-        krew uninstall convert >/dev/null 2>&1 || tree "${HOME}/.krew"
+        # tree "${HOME}/.krew"
+        # KREW_OS="windows" KREW_ARCH="arm" \
+        #   krew install --manifest="plugins/convert.yaml" \
+        #     --archive="build/archive/kubectl-convert.windows.armv7.tar.gz" || tree "${HOME}/.krew"
+        # krew uninstall convert || tree "${HOME}/.krew"
+        # krew uninstall convert >/dev/null 2>&1 || tree "${HOME}/.krew"
 
         tree "${HOME}/.krew"
         KREW_OS="linux" KREW_ARCH="386" \
@@ -111,12 +112,12 @@ jobs:
         krew uninstall convert || tree "${HOME}/.krew"
         krew uninstall convert >/dev/null 2>&1 || tree "${HOME}/.krew"
 
-        tree "${HOME}/.krew"
-        KREW_OS="windows" KREW_ARCH="386" \
-          krew install --manifest="plugins/convert.yaml" \
-            --archive="build/archive/kubectl-convert.windows.x86.tar.gz" || tree "${HOME}/.krew"
-        krew uninstall convert || tree "${HOME}/.krew"
-        krew uninstall convert >/dev/null 2>&1 || tree "${HOME}/.krew"
+        # tree "${HOME}/.krew"
+        # KREW_OS="windows" KREW_ARCH="386" \
+        #   krew install --manifest="plugins/convert.yaml" \
+        #     --archive="build/archive/kubectl-convert.windows.x86.tar.gz" || tree "${HOME}/.krew"
+        # krew uninstall convert || tree "${HOME}/.krew"
+        # krew uninstall convert >/dev/null 2>&1 || tree "${HOME}/.krew"
 
         tree "${HOME}/.krew"
         KREW_OS="darwin" KREW_ARCH="amd64" \
