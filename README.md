@@ -30,7 +30,12 @@ __NOTE:__ Your SHOULD NEVER edit yaml files in plugins dir manually.
         after:matrix:success:
         - shell@file?str|template?str: templates/shell/write-blob-entry.tmpl
           env:
-          - name: IN_ARCHIVE_FILES
+          # entrypoint file for the plugin (extracted)
+          - name: ENTRYPOINT
+            value@template: |-
+              ${APP}
+
+          - name: FILES
             value@transform?str:
               value@template?str: |-
                 # your list of files to be extracted from archive

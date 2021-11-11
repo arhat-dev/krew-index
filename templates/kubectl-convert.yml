@@ -72,7 +72,15 @@ workflow:run@:
     after:matrix:success:
     - shell@file?str|template?str: templates/shell/write-blob-entry.tmpl
       env:
-      - name: IN_ARCHIVE_FILES
+      - name: ENTRYPOINT
+        value@template: |-
+          {{- $suffix := "" -}}
+          {{- if eq matrix.kernel "windows" -}}
+            {{- $suffix = ".exe" -}}
+          {{- end -}}
+          {{- env.APP -}}{{- $suffix -}}
+
+      - name: FILES
         value@transform?str:
           value@template?str: |-
             {{ $suffix := "" -}}

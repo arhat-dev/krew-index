@@ -15,6 +15,6 @@
         {{- index (split VALUE "= ") 1 | trimSpace -}}
   uri: https://github.com/arhat-dev/krew-index/releases/download/release-${APP}-${GIT_COMMIT:0:8}/${APP}.${MATRIX_KERNEL}.${MATRIX_ARCH}.tar.gz
 
-  bin: ${APP}
+  bin: ${ENTRYPOINT}
   files:
-${IN_ARCHIVE_FILES}
+${FILES}
