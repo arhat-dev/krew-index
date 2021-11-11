@@ -16,20 +16,35 @@ on:
     tags:
     - v*
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   reproduce:
-    runs-on: ubuntu-20.04
+    runs-on: ${{ matrix.os.name }}-${{ matrix.os.version }}
+    strategy:
+      matrix:
+        os:
+        - kernel: windows
+          name: windows
+          version: latest
+        # - kernel: linux
+        #   name: ubuntu
+        #   version: latest
+
+      fail-fast: false
     steps:
     - uses: actions/checkout@v2
       with:
         ssh-key: ${{ secrets.ORG_SSH_KEY }}
 
-    - uses: actions/setup-go@v2
-      with:
-        go-version: 1.17.x
-
-    - name: Install dukkha
-      uses: arhat-dev/actions-setup-dukkha@master
+#     - uses: actions/setup-go@v2
+#       with:
+#         go-version: 1.17.x
+#
+#     - name: Install dukkha
+#       uses: arhat-dev/actions-setup-dukkha@master
 
     - name: Install kubectl
       uses: azure/setup-kubectl@v1
@@ -38,113 +53,147 @@ jobs:
 
     - name: Install krew
       uses: arhat-dev/actions-setup-krew@master
+
     - name: Prepare krew
       run: |-
         echo "${HOME}/.krew/bin" >>"${GITHUB_PATH}"
         kubectl krew update
 
-    - name: Install cosign
-      uses: sigstore/cosign-installer@main
+#     - name: Install cosign
+#       uses: sigstore/cosign-installer@main
+#
+#     - name: Install debug tools ()
+#       if: matrix.os.name == 'ubuntu'
+#       run: |-
+#         sudo apt-get -y install tree
+#
+#     - name: Install debug tools
+#       if: matrix.os.name == 'windows'
+#       continue-on-error: true
+#       run: |-
+#         choco --yes install tree --allow-unofficial
 
-    - name: Install debug tools
+    - name: Build ${{ matrix.plugin }} linux/darwin
+      if: matrix.os.name == 'ubuntu'
       run: |-
-        sudo apt-get -y install tree
-
-    - name: Build ${{ matrix.plugin }}
-      run: |-
+        echo "$PATH"
         dukkha run workflow local run index-kubectl-convert \
-          -m kernel=windows \
+          -m kernel!=windows \
           --translate-ansi-stream=false \
           --force-color
 
+    - name: Build ${{ matrix.plugin }} windows
+      if: matrix.os.name == 'windows'
+      run: |-
+        echo "$PATH"
+        # command -v dukkha
+        # dukkha run workflow local run index-kubectl-convert \
+        #   -m kernel=windows \
+        #   --translate-ansi-stream=false \
+        #   --force-color
+
     - name: Test krew redundent install/uninstall
-      continue-on-error: true
+      if: matrix.os.name == 'windows'
       run: |-
         set -ex
 
-        # krew -v 10 uninstall convert >/dev/null 2>&1 || tree "${HOME}/.krew"
-        # tree "${HOME}/.krew"
-        # KREW_OS="linux" KREW_ARCH="amd64" \
-        #   krew -v 10 install --manifest="plugins/convert.yaml" \
-        #     --archive="build/archive/kubectl-convert.linux.amd64.tar.gz" || tree "${HOME}/.krew"
-        # krew -v 10 uninstall convert || tree "${HOME}/.krew"
-        # krew -v 10 uninstall convert >/dev/null 2>&1 || tree "${HOME}/.krew"
+        choco install --yes --allow-unofficial wget
 
-        tree "${HOME}/.krew"
+        mkdir -p build/archive
+        cd build/archive
+        wget https://github.com/arhat-dev/krew-index/releases/download/release-kubectl-convert-66dabd45/kubectl-convert.windows.amd64.tar.gz
+        wget https://github.com/arhat-dev/krew-index/releases/download/release-kubectl-convert-66dabd45/kubectl-convert.windows.arm64.tar.gz
+        wget https://github.com/arhat-dev/krew-index/releases/download/release-kubectl-convert-66dabd45/kubectl-convert.windows.armv7.tar.gz
+        wget https://github.com/arhat-dev/krew-index/releases/download/release-kubectl-convert-66dabd45/kubectl-convert.windows.x86.tar.gz
+        cd -
+
+        cd plugins/
+        rm convert.yaml
+        wget https://raw.githubusercontent.com/arhat-dev/krew-index/96557da2487d99401f7f5999b02ba6055800df08/plugins/convert.yaml
+        cd -
+
         KREW_OS="windows" KREW_ARCH="amd64" \
           krew -v 10 install --manifest="plugins/convert.yaml" \
-            --archive="build/archive/kubectl-convert.windows.amd64.tar.gz" || tree "${HOME}/.krew"
-        krew -v 10 uninstall convert || tree "${HOME}/.krew"
-        krew -v 10 uninstall convert >/dev/null 2>&1 || tree "${HOME}/.krew"
+            --archive="build/archive/kubectl-convert.windows.amd64.tar.gz"
+        krew -v 10 uninstall convert
+        krew -v 10 uninstall convert >/dev/null 2>&1 || true
 
-        # tree "${HOME}/.krew"
-        # KREW_OS="linux" KREW_ARCH="arm64" \
-        #   krew -v 10 install --manifest="plugins/convert.yaml" \
-        #     --archive="build/archive/kubectl-convert.linux.arm64.tar.gz" || tree "${HOME}/.krew"
-        # krew -v 10 uninstall convert || tree "${HOME}/.krew"
-        # krew -v 10 uninstall convert >/dev/null 2>&1 || tree "${HOME}/.krew"
-
-        tree "${HOME}/.krew"
         KREW_OS="windows" KREW_ARCH="arm64" \
           krew -v 10 install --manifest="plugins/convert.yaml" \
-            --archive="build/archive/kubectl-convert.windows.arm64.tar.gz" || tree "${HOME}/.krew"
-        krew -v 10 uninstall convert || tree "${HOME}/.krew"
-        krew -v 10 uninstall convert >/dev/null 2>&1 || tree "${HOME}/.krew"
+            --archive="build/archive/kubectl-convert.windows.arm64.tar.gz"
+        krew -v 10 uninstall convert
+        krew -v 10 uninstall convert >/dev/null 2>&1 || true
 
-        # tree "${HOME}/.krew"
-        # KREW_OS="linux" KREW_ARCH="arm" \
-        #   krew -v 10 install --manifest="plugins/convert.yaml" \
-        #     --archive="build/archive/kubectl-convert.linux.armv7.tar.gz" || tree "${HOME}/.krew"
-        # krew -v 10 uninstall convert || tree "${HOME}/.krew"
-        # krew -v 10 uninstall convert >/dev/null 2>&1 || tree "${HOME}/.krew"
-
-        tree "${HOME}/.krew"
         KREW_OS="windows" KREW_ARCH="arm" \
           krew -v 10 install --manifest="plugins/convert.yaml" \
-            --archive="build/archive/kubectl-convert.windows.armv7.tar.gz" || tree "${HOME}/.krew"
-        krew -v 10 uninstall convert || tree "${HOME}/.krew"
-        krew -v 10 uninstall convert >/dev/null 2>&1 || tree "${HOME}/.krew"
+            --archive="build/archive/kubectl-convert.windows.armv7.tar.gz"
+        krew -v 10 uninstall convert
+        krew -v 10 uninstall convert >/dev/null 2>&1 || true
 
-        # tree "${HOME}/.krew"
-        # KREW_OS="linux" KREW_ARCH="386" \
-        #   krew -v 10 install --manifest="plugins/convert.yaml" \
-        #     --archive="build/archive/kubectl-convert.linux.x86.tar.gz" || tree "${HOME}/.krew"
-        # krew -v 10 uninstall convert || tree "${HOME}/.krew"
-        # krew -v 10 uninstall convert >/dev/null 2>&1 || tree "${HOME}/.krew"
-
-        tree "${HOME}/.krew"
         KREW_OS="windows" KREW_ARCH="386" \
           krew -v 10 install --manifest="plugins/convert.yaml" \
-            --archive="build/archive/kubectl-convert.windows.x86.tar.gz" || tree "${HOME}/.krew"
+            --archive="build/archive/kubectl-convert.windows.x86.tar.gz"
+        krew -v 10 uninstall convert
+        krew -v 10 uninstall convert >/dev/null 2>&1 || true
+
+    - name: Test krew install/uninstall
+      if: matrix.os.name == 'ubuntu'
+      run: |-
+        krew -v 10 uninstall convert >/dev/null 2>&1 || tree "${HOME}/.krew"
+        tree "${HOME}/.krew"
+        KREW_OS="linux" KREW_ARCH="amd64" \
+          krew -v 10 install --manifest="plugins/convert.yaml" \
+            --archive="build/archive/kubectl-convert.linux.amd64.tar.gz" || tree "${HOME}/.krew"
         krew -v 10 uninstall convert || tree "${HOME}/.krew"
         krew -v 10 uninstall convert >/dev/null 2>&1 || tree "${HOME}/.krew"
 
-#         tree "${HOME}/.krew"
-#         KREW_OS="darwin" KREW_ARCH="amd64" \
-#           krew -v 10 install --manifest="plugins/convert.yaml" \
-#             --archive="build/archive/kubectl-convert.darwin.amd64.tar.gz" || tree "${HOME}/.krew"
-#         krew -v 10 uninstall convert || tree "${HOME}/.krew"
-#         krew -v 10 uninstall convert >/dev/null 2>&1 || tree "${HOME}/.krew"
-#
-#         tree "${HOME}/.krew"
-#         KREW_OS="darwin" KREW_ARCH="arm64" \
-#           krew -v 10 install --manifest="plugins/convert.yaml" \
-#             --archive="build/archive/kubectl-convert.darwin.arm64.tar.gz" || tree "${HOME}/.krew"
-#         krew -v 10 uninstall convert || tree "${HOME}/.krew"
-#         krew -v 10 uninstall convert >/dev/null 2>&1 || tree "${HOME}/.krew"
-#
-#         tree "${HOME}/.krew"
-#         KREW_OS="linux" KREW_ARCH="s390x" \
-#           krew -v 10 install --manifest="plugins/convert.yaml" \
-#             --archive="build/archive/kubectl-convert.linux.s390x.tar.gz" || tree "${HOME}/.krew"
-#         krew -v 10 uninstall convert || tree "${HOME}/.krew"
-#         krew -v 10 uninstall convert >/dev/null 2>&1 || tree "${HOME}/.krew"
-#
-#         tree "${HOME}/.krew"
-#         KREW_OS="linux" KREW_ARCH="ppc64le" \
-#           krew -v 10 install --manifest="plugins/convert.yaml" \
-#             --archive="build/archive/kubectl-convert.linux.ppc64le.tar.gz" || tree "${HOME}/.krew"
-#         krew -v 10 uninstall convert || tree "${HOME}/.krew"
+        tree "${HOME}/.krew"
+        KREW_OS="linux" KREW_ARCH="arm64" \
+          krew -v 10 install --manifest="plugins/convert.yaml" \
+            --archive="build/archive/kubectl-convert.linux.arm64.tar.gz" || tree "${HOME}/.krew"
+        krew -v 10 uninstall convert || tree "${HOME}/.krew"
+        krew -v 10 uninstall convert >/dev/null 2>&1 || tree "${HOME}/.krew"
+
+        tree "${HOME}/.krew"
+        KREW_OS="linux" KREW_ARCH="arm" \
+          krew -v 10 install --manifest="plugins/convert.yaml" \
+            --archive="build/archive/kubectl-convert.linux.armv7.tar.gz" || tree "${HOME}/.krew"
+        krew -v 10 uninstall convert || tree "${HOME}/.krew"
+        krew -v 10 uninstall convert >/dev/null 2>&1 || tree "${HOME}/.krew"
+
+        tree "${HOME}/.krew"
+        KREW_OS="linux" KREW_ARCH="386" \
+          krew -v 10 install --manifest="plugins/convert.yaml" \
+            --archive="build/archive/kubectl-convert.linux.x86.tar.gz" || tree "${HOME}/.krew"
+        krew -v 10 uninstall convert || tree "${HOME}/.krew"
+        krew -v 10 uninstall convert >/dev/null 2>&1 || tree "${HOME}/.krew"
+
+        tree "${HOME}/.krew"
+        KREW_OS="darwin" KREW_ARCH="amd64" \
+          krew -v 10 install --manifest="plugins/convert.yaml" \
+            --archive="build/archive/kubectl-convert.darwin.amd64.tar.gz" || tree "${HOME}/.krew"
+        krew -v 10 uninstall convert || tree "${HOME}/.krew"
+        krew -v 10 uninstall convert >/dev/null 2>&1 || tree "${HOME}/.krew"
+
+        tree "${HOME}/.krew"
+        KREW_OS="darwin" KREW_ARCH="arm64" \
+          krew -v 10 install --manifest="plugins/convert.yaml" \
+            --archive="build/archive/kubectl-convert.darwin.arm64.tar.gz" || tree "${HOME}/.krew"
+        krew -v 10 uninstall convert || tree "${HOME}/.krew"
+        krew -v 10 uninstall convert >/dev/null 2>&1 || tree "${HOME}/.krew"
+
+        tree "${HOME}/.krew"
+        KREW_OS="linux" KREW_ARCH="s390x" \
+          krew -v 10 install --manifest="plugins/convert.yaml" \
+            --archive="build/archive/kubectl-convert.linux.s390x.tar.gz" || tree "${HOME}/.krew"
+        krew -v 10 uninstall convert || tree "${HOME}/.krew"
+        krew -v 10 uninstall convert >/dev/null 2>&1 || tree "${HOME}/.krew"
+
+        tree "${HOME}/.krew"
+        KREW_OS="linux" KREW_ARCH="ppc64le" \
+          krew -v 10 install --manifest="plugins/convert.yaml" \
+            --archive="build/archive/kubectl-convert.linux.ppc64le.tar.gz" || tree "${HOME}/.krew"
+        krew -v 10 uninstall convert || tree "${HOME}/.krew"
 
     - name: Check krew dir
       if: always()
