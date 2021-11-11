@@ -7,5 +7,6 @@
   {{- fail (printf "failed to write manifest %v" $err) -}}
 {{- end -}}
 
-dukkha render build/manifests/{{- env.APP -}}.yaml \
+dukkha render --chdir build \
+  build/manifests/{{- env.APP -}}.yaml \
   -o plugins/{{- trimPrefix "kubectl-" env.APP -}}.yaml

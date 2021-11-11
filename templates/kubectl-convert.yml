@@ -41,10 +41,6 @@ golang:build:
           "build/src/{{- env.APP -}}"
     after:matrix:success:
     - shell@template: |-
-        {{- $suffix := "" -}}
-        {{- if eq matrix.kernel "windows" -}}
-          {{ $suffix := ".exe" }}
-        {{- end -}}
         {{- $dir := printf "%s.%s.%s" env.APP matrix.kernel matrix.arch -}}
 
         mkdir -p build/archive
@@ -55,8 +51,14 @@ golang:build:
 
   chdir@template: build/src/{{- env.APP -}}
   path: ./cmd/kubectl-convert
-  outputs@template:
-  - ../../bin/{{- env.APP -}}.{{- matrix.kernel -}}.{{- matrix.arch -}}/{{- env.APP -}}
+  outputs@:
+  - __@template?str: |-
+      {{ $suffix := "" -}}
+      {{- if eq matrix.kernel "windows" -}}
+        {{ $suffix = ".exe" }}
+      {{- end -}}
+      ../../bin/{{- env.APP -}}.{{- matrix.kernel -}}.{{- matrix.arch -}}/{{- env.APP -}}{{- $suffix -}}
+
   ldflags:
   - -s -w
 
@@ -69,6 +71,24 @@ workflow:run@:
     - shell: mkdir -p build/manifests
     after:matrix:success:
     - shell@file?str|template?str: templates/shell/write-blob-entry.tmpl
+      env:
+      - name: IN_ARCHIVE_FILES
+        value@transform?str:
+          value@template?str: |-
+            {{ $suffix := "" -}}
+            {{- if eq matrix.kernel "windows" -}}
+              {{ $suffix = ".exe" }}
+            {{- end -}}
+            {{- $prefix := printf "%s.%s.%s"
+                  env.APP matrix.kernel matrix.arch -}}
+            - from: {{ $prefix }}/{{ env.APP }}{{ $suffix }}
+              to: .
+            - from: {{ $prefix }}/LICENSE
+              to: .
+          ops:
+          - template: |-
+              {{ VALUE | indent 2 }}
+
     after:success:
     - shell@file?str|template?str: templates/shell/write-manifest.tmpl
 

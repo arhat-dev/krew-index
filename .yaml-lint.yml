@@ -8,6 +8,7 @@ ignore: |
   .dukkha/cache/
   plugins/
   templates/**/*-tasks.yml
+  templates/manifest/blob-entry.yml
 
 rules:
   braces:

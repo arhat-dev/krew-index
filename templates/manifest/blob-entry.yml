@@ -9,7 +9,7 @@
         {{- archconv.GolangArch "${MATRIX_ARCH}" -}}
 
   sha256@transform?str:
-    value@shell: &openssl_dgst openssl dgst -sha256 ../archive/${APP}.${MATRIX_KERNEL}.${MATRIX_ARCH}.tar.gz
+    value@shell: &openssl_dgst openssl dgst -sha256 archive/${APP}.${MATRIX_KERNEL}.${MATRIX_ARCH}.tar.gz
     ops:
     - template: &get_checksum_from_openssl_dgst_output |-
         {{- index (split VALUE "= ") 1 | trimSpace -}}
@@ -17,7 +17,4 @@
 
   bin: ${APP}
   files:
-  - from: ${APP}.${MATRIX_KERNEL}.${MATRIX_ARCH}/${APP}
-    to: .
-  - from: ${APP}.${MATRIX_KERNEL}.${MATRIX_ARCH}/LICENSE
-    to: .
+${IN_ARCHIVE_FILES}

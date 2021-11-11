@@ -29,6 +29,17 @@ __NOTE:__ Your SHOULD NEVER edit yaml files in plugins dir manually.
 
         after:matrix:success:
         - shell@file?str|template?str: templates/shell/write-blob-entry.tmpl
+          env:
+          - name: IN_ARCHIVE_FILES
+            value@transform?str:
+              value@template?str: |-
+                # your list of files to be extracted from archive
+                - from: something # in archive path
+                  to: . # where it should be extracted to, relative path to plugin installation dir
+              ops:
+              # this template operation is required by templates/shell/write-blob-entry.tmpl
+              - template: |-
+                  {{ VALUE | indent 2 }}
 
         after:success:
         - shell@file?str|template?str: templates/shell/write-manifest.tmpl
